@@ -36,7 +36,7 @@ class FileStorage:
 
     def reload(self):
         """If json file exists, convert obj dicts back to instances"""
-         try:
+        try:
             with open(FileStorage.__file_path) as f:
                 objdict = json.load(f)
                 for o in objdict.values():
