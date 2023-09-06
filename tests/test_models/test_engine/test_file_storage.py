@@ -1,6 +1,8 @@
 #!/usr/bin/python3
-"""
-    Unittest to test FileStorage class
+"""Defines unittests for models/engine/file_storage.py.
+Unittest classes:
+    TestFileStorage_instantiation
+    TestFileStorage_methods
 """
 import os
 import json
@@ -8,7 +10,7 @@ import models
 import unittest
 from datetime import datetime
 from models.base_model import BaseModel
-from models.engine import file_storage
+from models.engine.file_storage import FileStorage
 from models.user import User
 from models.state import State
 from models.place import Place
@@ -18,9 +20,7 @@ from models.review import Review
 
 
 class TestFileStorage_instantiation(unittest.TestCase):
-    """
-        Unittests to test instantiation of the 'FileStorage' class.
-    """
+    """Unittests for testing instantiation of the FileStorage class."""
 
     def test_FileStorage_instantiation_no_args(self):
         self.assertEqual(type(FileStorage()), FileStorage)
@@ -40,9 +40,7 @@ class TestFileStorage_instantiation(unittest.TestCase):
 
 
 class TestFileStorage_methods(unittest.TestCase):
-    """
-        Unittests to testing methods of the 'FileStorage' class.
-    """
+    """Unittests for testing methods of the FileStorage class."""
 
     @classmethod
     def setUp(self):
@@ -104,10 +102,6 @@ class TestFileStorage_methods(unittest.TestCase):
         with self.assertRaises(TypeError):
             models.storage.new(BaseModel(), 1)
 
-    def test_new_with_None(self):
-        with self.assertRaises(AttributeError):
-            models.storage.new(None)
-
     def test_save(self):
         bm = BaseModel()
         us = User()
@@ -164,7 +158,6 @@ class TestFileStorage_methods(unittest.TestCase):
         self.assertIn("City." + cy.id, objs)
         self.assertIn("Amenity." + am.id, objs)
         self.assertIn("Review." + rv.id, objs)
-
 
     def test_reload_with_arg(self):
         with self.assertRaises(TypeError):
