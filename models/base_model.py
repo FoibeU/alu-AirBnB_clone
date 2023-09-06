@@ -1,51 +1,77 @@
-#usr/bin/python3
-"""Parent class BaseModel"""
+#!/usr/bin/python3
 from datetime import datetime
 from uuid import uuid4
 import models
 
-class BaseModel:
-    """
-        Parent class 'BaseModel' for AirBnB clone
+"""
+Module BaseModel
+Parent of all classes
+"""
+
+
+class BaseModel():
+    """Base class for Airbnb clone project
+    Methods:
+        __init__(self, *args, **kwargs)
+        __str__(self)
+        __save(self)
+        __repr__(self)
+        to_dict(self)
     """
 
     def __init__(self, *args, **kwargs):
         """
-            Initialize attributes
+        Initialize attributes: random uuid, dates created/updated
+
+
         """
-        tform = "%Y-%m-%dT%H:%M:%S.%f"
-        self.id = str(uuid4())
-        self.created_at = datetime.today()
-        self.updated_at = datetime.today()
-        if len(kwargs) != 0:
-            for k, v in kwargs.items():
-                if k == "created_at" or k == "updated_at":
-                    self.__dict__[k] = datetime.strptime(v, tform)
+        if kwargs:
+            for key, val in kwargs.items():
+                if "created_at" == key:
+                    self.created_at = datetime.strptime(kwargs["created_at"],
+                                                        "%Y-%m-%dT%H:%M:%S.%f")
+                elif "updated_at" == key:
+                    self.updated_at = datetime.strptime(kwargs["updated_at"],
+                                                        "%Y-%m-%dT%H:%M:%S.%f")
+                elif "__class__" == key:
+                    pass
                 else:
-                    self.__dict__[k] = v
+                    setattr(self, key, val)
         else:
+            self.id = str(uuid4())
+            self.created_at = datetime.now()
+            self.updated_at = datetime.now()
             models.storage.new(self)
+
+    def __str__(self):
+        """
+        Return string of info about model
+        """
+        return ('[{}] ({}) {}'.
+                format(self.__class__.__name__, self.id, self.__dict__))
+
+    def __repr__(self):
+        """
+        returns string representation
+        """
+        return (self.__str__())
 
     def save(self):
         """
-            Save the model instance to the storage engine
+        Update instance with updated time & save to serialized file
         """
-        self.updated_at = datetime.today()
+        self.updated_at = datetime.now()
         models.storage.save()
 
     def to_dict(self):
         """
-            Return dictionary with string format
+        Return dic with string formats of times; add class info to dic
         """
-        rdict = self.__dict__.copy()
-        rdict["created_at"] = self.created_at.isoformat()
-        rdict["updated_at"] = self.updated_at.isoformat()
-        rdict["__class__"] = self.__class__.__name__
-        return rdict
-
-    def __str__(self):
-        """
-            Return string representation of the model
-        """
-        clname = self.__class__.__name__
-        return "[{}] ({}) {}".format(clname, self.id, self.__dict__)
+        dic = {}
+        dic["__class__"] = self.__class__.__name__
+        for k, v in self.__dict__.items():
+            if isinstance(v, (datetime, )):
+                dic[k] = v.isoformat()
+            else:
+                dic[k] = v
+        return dic
