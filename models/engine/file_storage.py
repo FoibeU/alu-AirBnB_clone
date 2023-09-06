@@ -15,8 +15,7 @@ class FileStorage:
     """serializes and deserialzes json files"""
 
     __file_path = 'file.json'
-    __objects = {}
-  
+    __objects = {}  
 
     def all(self):
         """Return dictionary of <class>.<id> : object instance"""
